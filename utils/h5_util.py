@@ -23,19 +23,15 @@ def process_image(image, shape, resize_mode=Image.BILINEAR):
     img = Image.open(image)
     img = img.resize(shape, resize_mode)
     img.load()
-    img = np.asarray(img, dtype="float32")
-    if len(img.shape) < 3:
-        return img.T
-    else:
-        return np.transpose(img, (1,0,2))
+    return np.asarray(img, dtype="float32")
 
 
 def build_h5_dataset(data_dir, list_path, out_dir, shape, name, norm=False):
     images = read_images(list_path)
     images_size = len(images)
     dataset = h5py.File(out_dir+name+'.h5', 'w')
-    dataset.create_dataset('X', (images_size, *shape, 3), dtype='f')
-    dataset.create_dataset('Y', (images_size, *shape), dtype='f')
+    dataset.create_dataset('X', (images_size, shape[1], shape[0], 3), dtype='f')
+    dataset.create_dataset('Y', (images_size, shape[1], shape[0]), dtype='f')
     pbar = ProgressBar()
     for index, (image, label) in pbar(enumerate(images)):
         image = process_image(data_dir+image, shape)
