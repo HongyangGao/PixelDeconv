@@ -54,7 +54,12 @@ class H5DataLoader(object):
             self.gen_indexes()
             return self.next_batch(batch_size)
         cur_indexes.sort()
-        return self.images[cur_indexes], self.labels[cur_indexes]
+        
+        if len(cur_indexes) :
+            return self.images[cur_indexes], self.names[cur_indexes]
+        else:
+            self.cur_index = 0
+            return  np.empty(0),  np.empty(0)
 
 
 class H53DDataLoader(object):
